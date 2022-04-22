@@ -9,3 +9,14 @@ mysql:
   ip: 127.0.0.1
   port: 3306
   db: test
+
+zap:
+  fileStdout: true
+  consoleStdout: true
+  level: debug
+  path: log/server.log
+  maxSize: 111
+  maxAge: 111
+  maxBackups: 111
+  localTime: true
+  compress: true

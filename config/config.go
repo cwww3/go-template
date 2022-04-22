@@ -10,8 +10,9 @@ var (
 )
 
 type Cfg struct {
-	*MysqlCfg  `json:"mysqlCfg"`
-	*ServerCfg `json:"serverCfg"`
+	*MysqlCfg
+	*ServerCfg
+	*ZapCfg
 }
 
 func GetMysqlConfig() *MysqlCfg {
@@ -20,6 +21,10 @@ func GetMysqlConfig() *MysqlCfg {
 
 func GetServerConfig() *ServerCfg {
 	return cfg.ServerCfg
+}
+
+func GetZapConfig() *ZapCfg {
+	return cfg.ZapCfg
 }
 
 func LoadConfig(filePath string, fileName string, fileExt string) {
@@ -38,6 +43,10 @@ func ParseConfig() {
 		panic(err)
 	}
 	err = viper.Sub("server").Unmarshal(&cfg.ServerCfg)
+	if err != nil {
+		panic(err)
+	}
+	err = viper.Sub("zap").Unmarshal(&cfg.ZapCfg)
 	if err != nil {
 		panic(err)
 	}

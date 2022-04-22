@@ -1,4 +1,6 @@
 .idea
 
+log
+
 # Go workspace file
 #go.work
