@@ -27,17 +27,16 @@ func GetZapConfig() *ZapCfg {
 	return cfg.ZapCfg
 }
 
-func LoadConfig(filePath string, fileName string, fileExt string) {
-	viper.SetConfigName(fileName) // name of config file (without extension)
-	viper.SetConfigType(fileExt)  // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath(filePath) // optionally look for config in the working directory
+func LoadConfig(filePath string) {
+	viper.SetConfigFile(filePath) // name of config file (without extension)
 	err := viper.ReadInConfig()   // Find and read the config file
 	if err != nil {               // Handle errors reading the config file
 		panic(fmt.Errorf("Fatal error config file: %w \n", err))
 	}
+	parseConfig()
 }
 
-func ParseConfig() {
+func parseConfig() {
 	err := viper.Sub("mysql").Unmarshal(&cfg.MysqlCfg)
 	if err != nil {
 		panic(err)

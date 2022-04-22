@@ -4,13 +4,16 @@ import (
 	"github.com/cwww3/go-template/config"
 	"github.com/cwww3/go-template/internal/core"
 	"github.com/cwww3/go-template/pkg/logger"
+	"github.com/spf13/pflag"
 )
 
+var configFile string
+
 func main() {
-	config.LoadConfig("config", "config.dev", "yml")
-	config.ParseConfig()
+	pflag.StringVarP(&configFile, "config", "c", "config/config.dev.yml", "config path")
+	pflag.Parse()
+	config.LoadConfig(configFile)
 	logger.Init()
-	logger.GetLogger().Info("test log")
 	s := core.GetServer()
 	s.Start()
 }
