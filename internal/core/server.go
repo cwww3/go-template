@@ -1,6 +1,8 @@
-package main
+package core
 
 import (
+	"fmt"
+	"github.com/cwww3/go-template/config"
 	"github.com/cwww3/go-template/internal/controller"
 	"github.com/cwww3/go-template/internal/repository/orm"
 	"github.com/cwww3/go-template/internal/router"
@@ -9,12 +11,21 @@ import (
 	"log"
 )
 
-func main() {
+type Server struct {
+	e *gin.Engine
+}
+
+func GetServer() *Server {
+	gin.SetMode(config.GetServerConfig().Mode)
 	e := gin.Default()
-	dsn := ""
+	dsn := config.GetMysqlConfig().GetDsn()
 	r := orm.NewOrmRepository(dsn)
 	uc := usecase.NewUserUseCase(r)
 	c := controller.NewUserController(uc)
 	router.RegisterUserRoute(e, c)
-	log.Fatalln(e.Run(":8080"))
+	return &Server{e: e}
+}
+
+func (s *Server) Start() {
+	log.Fatalln(s.e.Run(fmt.Sprintf(":%s", config.GetServerConfig().Port)))
 }
