@@ -2,7 +2,6 @@ package orm
 
 import (
 	"context"
-	"fmt"
 	"github.com/cwww3/go-template/internal/repository"
 	"github.com/cwww3/go-template/internal/repository/orm/user"
 	"gorm.io/driver/mysql"
@@ -31,24 +30,7 @@ func (or ormRepository) GetUserRepository() repository.UserRepository {
 }
 
 func (or ormRepository) Atomic(ctx context.Context, fn func(r repository.Repository) error) error {
-	tx := or.db.Begin()
-	var err error
-	defer func() {
-		if p := recover(); p != nil {
-			tx.Rollback()
-			switch p.(type) {
-			case error:
-				err = fmt.Errorf("panic err: %v", p)
-			default:
-				panic(err)
-			}
-		}
-	}()
-	err = fn(&ormRepository{db: tx})
-	if err != nil {
-		tx.Rollback()
-	} else {
-		tx.Commit()
-	}
-	return err
+	return or.db.Transaction(func(tx *gorm.DB) error {
+		return fn(&ormRepository{db: tx})
+	})
 }
